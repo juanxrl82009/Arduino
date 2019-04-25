@@ -11,29 +11,36 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 
+
+
 /**
  *
  * @author John Castro
  */
 public class vistaBase extends javax.swing.JFrame {
-     private Conexio con;
+    private Conexio con;
      
      
     Connection cn;
     Statement st;
     ResultSet rs;
-    DefaultTableModel modelo;
+    DefaultTableModel modelo2;
     int id;
    
     public vistaBase() {
+        con = new Conexio();
         initComponents();
         setVisible(true);
         setLocationRelativeTo(null);
+        
+        tabla.getColumnModel().getColumn(id);
         listar();
+        
+        
     }
     
     void listar(){    
-        modelo=(DefaultTableModel)tabla.getModel();
+        modelo2=(DefaultTableModel)tabla.getModel();
         /*Se almacena la consulta sql en un string*/
         String sql="SELECT * "+"FROM dato";
         try{
@@ -41,13 +48,13 @@ public class vistaBase extends javax.swing.JFrame {
             cn=con.getConnection();
             st=cn.createStatement();
             rs=st.executeQuery(sql);   
-            Object[] Datos= new Object[7]; /*Un array donde se almacenan las filas de la tabla. el tamaño del
+            Object[] Datos= new Object[3]; /*Un array donde se almacenan las filas de la tabla. el tamaño del
             array debe ser el numero de columnas que tenga nuestra consulta*/
             while(rs.next()){
             Datos[0]=rs.getInt("fecha");/*deben llamarse exactamente igual a como esta en la tabla*/
             Datos[1]=rs.getString("temperatura");/*deben llamarse exactamente igual a como esta en la tabla*/
             Datos[2]=rs.getString("humedad");
-            modelo.addRow(Datos);
+            modelo2.addRow(Datos);
             }    
         }catch(SQLException e){}
     }
@@ -83,15 +90,20 @@ public class vistaBase extends javax.swing.JFrame {
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Fecha", "Temperatura", "Humedad"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tabla.setFuenteFilas(new java.awt.Font("Decker", 0, 18)); // NOI18N
         tabla.setFuenteFilasSelect(new java.awt.Font("Decker", 0, 18)); // NOI18N
         tabla.setFuenteHead(new java.awt.Font("Decker", 0, 24)); // NOI18N
@@ -99,6 +111,8 @@ public class vistaBase extends javax.swing.JFrame {
         tabla.setRowMargin(0);
         jScrollPane1.setViewportView(tabla);
         if (tabla.getColumnModel().getColumnCount() > 0) {
+            tabla.getColumnModel().getColumn(0).setResizable(false);
+            tabla.getColumnModel().getColumn(1).setResizable(false);
             tabla.getColumnModel().getColumn(2).setResizable(false);
         }
 
@@ -124,40 +138,7 @@ public class vistaBase extends javax.swing.JFrame {
         listar();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(vistaBase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(vistaBase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(vistaBase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(vistaBase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new vistaBase().setVisible(true);
-            }
-        });
-    }
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
